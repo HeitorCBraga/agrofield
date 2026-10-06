@@ -38,6 +38,9 @@ services:
       DATABASE_URL: postgresql://agrofield:agrofield@postgres:5432/agrofield
       REDIS_URL: redis://redis:6379
       PORT: 3333
+      JWT_ACCESS_SECRET: change-me-access-in-production
+      JWT_REFRESH_SECRET: change-me-refresh-in-production
+      FRONTEND_URL: http://localhost:3000
     ports:
       - "3333:3333"
     depends_on:
@@ -50,9 +53,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3333
     restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3333
     ports:
       - "3000:3000"
     depends_on:
