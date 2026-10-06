@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma.js";
+import { getOwnedProperty, getOwnedPlot } from "../../lib/ownership.js";
 import { authenticate } from "../auth/auth.middleware.js";
 
 interface PlotBody {
@@ -8,23 +9,13 @@ interface PlotBody {
   soilType: string;
 }
 
-async function findOwnedProperty(propertyId: string, ownerId: string) {
-  const property = await prisma.property.findUnique({ where: { id: propertyId } });
-  return property && property.ownerId === ownerId ? property : null;
-}
-
-async function findOwnedPlot(plotId: string, ownerId: string) {
-  const plot = await prisma.plot.findUnique({ where: { id: plotId }, include: { property: true } });
-  return plot && plot.property.ownerId === ownerId ? plot : null;
-}
-
 export async function plotRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authenticate);
 
   app.post<{ Params: { propertyId: string }; Body: PlotBody }>(
     "/properties/:propertyId/plots",
     async (request, reply) => {
-      const property = await findOwnedProperty(request.params.propertyId, request.userId!);
+      const property = await getOwnedProperty(request.params.propertyId, request.userId!);
       if (!property) {
         return reply.status(404).send({ message: "Propriedade não encontrada" });
       }
@@ -39,7 +30,7 @@ export async function plotRoutes(app: FastifyInstance) {
   );
 
   app.get<{ Params: { propertyId: string } }>("/properties/:propertyId/plots", async (request, reply) => {
-    const property = await findOwnedProperty(request.params.propertyId, request.userId!);
+    const property = await getOwnedProperty(request.params.propertyId, request.userId!);
     if (!property) {
       return reply.status(404).send({ message: "Propriedade não encontrada" });
     }
@@ -51,7 +42,7 @@ export async function plotRoutes(app: FastifyInstance) {
   });
 
   app.get<{ Params: { id: string } }>("/plots/:id", async (request, reply) => {
-    const plot = await findOwnedPlot(request.params.id, request.userId!);
+    const plot = await getOwnedPlot(request.params.id, request.userId!);
     if (!plot) {
       return reply.status(404).send({ message: "Talhão não encontrado" });
     }
@@ -60,7 +51,7 @@ export async function plotRoutes(app: FastifyInstance) {
   });
 
   app.put<{ Params: { id: string }; Body: Partial<PlotBody> }>("/plots/:id", async (request, reply) => {
-    const plot = await findOwnedPlot(request.params.id, request.userId!);
+    const plot = await getOwnedPlot(request.params.id, request.userId!);
     if (!plot) {
       return reply.status(404).send({ message: "Talhão não encontrado" });
     }
@@ -74,7 +65,7 @@ export async function plotRoutes(app: FastifyInstance) {
   });
 
   app.delete<{ Params: { id: string } }>("/plots/:id", async (request, reply) => {
-    const plot = await findOwnedPlot(request.params.id, request.userId!);
+    const plot = await getOwnedPlot(request.params.id, request.userId!);
     if (!plot) {
       return reply.status(404).send({ message: "Talhão não encontrado" });
     }

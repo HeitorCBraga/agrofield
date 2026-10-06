@@ -41,8 +41,51 @@ model Plot {
   soilType   String
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id])
+  crops      Crop[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@map("plots")
+}
+
+model Crop {
+  id                 String            @id @default(uuid())
+  name               String
+  variety            String?
+  plantedAt          DateTime
+  expectedHarvestAt  DateTime?
+  plotId             String
+  plot               Plot              @relation(fields: [plotId], references: [id])
+  inputApplications  InputApplication[]
+  harvests           Harvest[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@map("crops")
+}
+
+model InputApplication {
+  id          String   @id @default(uuid())
+  productName String
+  quantity    Float
+  unit        String
+  appliedAt   DateTime
+  cropId      String
+  crop        Crop     @relation(fields: [cropId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("input_applications")
+}
+
+model Harvest {
+  id          String   @id @default(uuid())
+  quantityKg  Float
+  harvestedAt DateTime
+  cropId      String
+  crop        Crop     @relation(fields: [cropId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("harvests")
 }
