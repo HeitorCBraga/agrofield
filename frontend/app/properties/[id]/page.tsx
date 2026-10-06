@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getProperty, getPlots, createPlot, type Property, type Plot } from "../../../lib/api";
 import { useRequireAuth } from "../../../lib/useRequireAuth";
+import { InfoTooltip } from "../../../components/InfoTooltip";
 
 export default function PropertyDetailPage() {
   useRequireAuth();
@@ -32,7 +33,7 @@ export default function PropertyDetailPage() {
       setProperty(propertyData);
       setPlots(plotsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar propriedade");
+      setError(err instanceof Error ? err.message : "Erro ao carregar fazenda");
     } finally {
       setLoading(false);
     }
@@ -51,7 +52,7 @@ export default function PropertyDetailPage() {
       setShowForm(false);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar talhão");
+      setError(err instanceof Error ? err.message : "Erro ao criar área");
     } finally {
       setSaving(false);
     }
@@ -78,10 +79,13 @@ export default function PropertyDetailPage() {
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
-      <h2 className="mb-3 text-lg font-semibold">Talhões</h2>
+      <h2 className="mb-3 flex items-center text-lg font-semibold">
+        Áreas
+        <InfoTooltip text="Uma área é uma parte da fazenda onde você planta algo específico — pode ter solo e cultivo diferentes de outra área da mesma fazenda." />
+      </h2>
 
       {plots.length === 0 ? (
-        <p className="mb-6 text-gray-600">Nenhum talhão cadastrado ainda.</p>
+        <p className="mb-6 text-gray-600">Nenhuma área cadastrada ainda.</p>
       ) : (
         <ul className="mb-6 space-y-3">
           {plots.map((plot) => (
@@ -99,7 +103,7 @@ export default function PropertyDetailPage() {
 
       {showForm ? (
         <form onSubmit={handleCreate} className="rounded-lg bg-white p-6 shadow">
-          <h3 className="mb-4 text-lg font-semibold">Novo talhão</h3>
+          <h3 className="mb-4 text-lg font-semibold">Nova área</h3>
 
           <label className="mb-1 block text-sm font-medium text-gray-700">Nome</label>
           <input
@@ -150,7 +154,7 @@ export default function PropertyDetailPage() {
           onClick={() => setShowForm(true)}
           className="rounded bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800"
         >
-          + Novo talhão
+          + Nova área
         </button>
       )}
     </main>

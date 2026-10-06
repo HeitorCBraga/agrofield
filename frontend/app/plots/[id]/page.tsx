@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getPlot, getCrops, createCrop, type Plot, type Crop } from "../../../lib/api";
 import { useRequireAuth } from "../../../lib/useRequireAuth";
+import { InfoTooltip } from "../../../components/InfoTooltip";
 
 export default function PlotDetailPage() {
   useRequireAuth();
@@ -32,7 +33,7 @@ export default function PlotDetailPage() {
       setPlot(plotData);
       setCrops(cropsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar talhão");
+      setError(err instanceof Error ? err.message : "Erro ao carregar área");
     } finally {
       setLoading(false);
     }
@@ -51,7 +52,7 @@ export default function PlotDetailPage() {
       setShowForm(false);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar cultura");
+      setError(err instanceof Error ? err.message : "Erro ao criar plantio");
     } finally {
       setSaving(false);
     }
@@ -78,10 +79,13 @@ export default function PlotDetailPage() {
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
-      <h2 className="mb-3 text-lg font-semibold">Ciclos de plantio</h2>
+      <h2 className="mb-3 flex items-center text-lg font-semibold">
+        Plantios
+        <InfoTooltip text="Um plantio representa um período em que você cultivou algo nessa área — desde quando plantou até a colheita." />
+      </h2>
 
       {crops.length === 0 ? (
-        <p className="mb-6 text-gray-600">Nenhum ciclo de plantio cadastrado ainda.</p>
+        <p className="mb-6 text-gray-600">Nenhum plantio cadastrado ainda.</p>
       ) : (
         <ul className="mb-6 space-y-3">
           {crops.map((crop) => (
@@ -102,7 +106,7 @@ export default function PlotDetailPage() {
 
       {showForm ? (
         <form onSubmit={handleCreate} className="rounded-lg bg-white p-6 shadow">
-          <h3 className="mb-4 text-lg font-semibold">Novo ciclo de plantio</h3>
+          <h3 className="mb-4 text-lg font-semibold">Novo plantio</h3>
 
           <label className="mb-1 block text-sm font-medium text-gray-700">Cultura</label>
           <input
@@ -152,7 +156,7 @@ export default function PlotDetailPage() {
           onClick={() => setShowForm(true)}
           className="rounded bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800"
         >
-          + Novo ciclo de plantio
+          + Novo plantio
         </button>
       )}
     </main>

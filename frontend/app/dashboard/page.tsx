@@ -32,7 +32,7 @@ export default function DashboardPage() {
       const data = await getProperties();
       setProperties(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar propriedades");
+      setError(err instanceof Error ? err.message : "Erro ao carregar fazendas");
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function DashboardPage() {
       setShowForm(false);
       await loadProperties();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar propriedade");
+      setError(err instanceof Error ? err.message : "Erro ao criar fazenda");
     } finally {
       setSaving(false);
     }
@@ -101,7 +101,7 @@ export default function DashboardPage() {
 
       {showForm ? (
         <form onSubmit={handleCreate} className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold">Nova propriedade</h2>
+          <h2 className="mb-4 text-lg font-semibold">Nova fazenda</h2>
 
           <label className="mb-1 block text-sm font-medium text-gray-700">Nome</label>
           <input
@@ -160,7 +160,7 @@ export default function DashboardPage() {
           onClick={() => setShowForm(true)}
           className="rounded bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800"
         >
-          + Nova propriedade
+          + Nova fazenda
         </button>
       )}
     </main>

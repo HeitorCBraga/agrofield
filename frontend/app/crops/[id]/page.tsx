@@ -14,6 +14,7 @@ import {
   type Harvest,
 } from "../../../lib/api";
 import { useRequireAuth } from "../../../lib/useRequireAuth";
+import { InfoTooltip } from "../../../components/InfoTooltip";
 
 export default function CropDetailPage() {
   useRequireAuth();
@@ -53,7 +54,7 @@ export default function CropDetailPage() {
       setInputApplications(inputsData);
       setHarvests(harvestsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar cultura");
+      setError(err instanceof Error ? err.message : "Erro ao carregar plantio");
     } finally {
       setLoading(false);
     }
@@ -73,7 +74,7 @@ export default function CropDetailPage() {
       setShowInputForm(false);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao registrar aplicação de insumo");
+      setError(err instanceof Error ? err.message : "Erro ao registrar insumo");
     } finally {
       setSavingInput(false);
     }
@@ -124,10 +125,13 @@ export default function CropDetailPage() {
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       <section className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold">Insumos aplicados</h2>
+        <h2 className="mb-3 flex items-center text-lg font-semibold">
+          Insumos
+          <InfoTooltip text="Insumo é qualquer produto aplicado durante o plantio, como fertilizante, adubo ou defensivo." />
+        </h2>
 
         {inputApplications.length === 0 ? (
-          <p className="mb-4 text-gray-600">Nenhuma aplicação registrada ainda.</p>
+          <p className="mb-4 text-gray-600">Nenhum insumo registrado ainda.</p>
         ) : (
           <ul className="mb-4 space-y-2">
             {inputApplications.map((input) => (
@@ -210,14 +214,18 @@ export default function CropDetailPage() {
             onClick={() => setShowInputForm(true)}
             className="rounded bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800"
           >
-            + Registrar aplicação de insumo
+            + Registrar insumo
           </button>
         )}
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">
-          Colheitas {harvests.length > 0 && <span className="text-sm font-normal text-gray-600">(total: {totalHarvested}kg)</span>}
+        <h2 className="mb-3 flex items-center text-lg font-semibold">
+          Colheitas
+          <InfoTooltip text="Colheita é o registro de quanto você colheu desse plantio — pode registrar mais de uma vez se colher em etapas." />
+          {harvests.length > 0 && (
+            <span className="ml-2 text-sm font-normal text-gray-600">(total: {totalHarvested}kg)</span>
+          )}
         </h2>
 
         {harvests.length === 0 ? (
