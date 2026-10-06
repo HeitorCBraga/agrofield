@@ -20,15 +20,29 @@ model User {
 }
 
 model Property {
-  id        String   @id @default(uuid())
-  name      String
-  city      String
-  state     String
-  areaHa    Float
-  ownerId   String
-  owner     User     @relation(fields: [ownerId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  city       String
+  state      String
+  areaHa     Float
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  plots      Plot[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("properties")
+}
+
+model Plot {
+  id         String   @id @default(uuid())
+  name       String
+  areaHa     Float
+  soilType   String
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("plots")
 }

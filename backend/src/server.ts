@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { propertyRoutes } from "./modules/property/property.routes.js";
+import { plotRoutes } from "./modules/plot/plot.routes.js";
 
 const app = Fastify({ logger: true });
 
@@ -10,6 +11,7 @@ app.get("/health", async () => {
 
 await app.register(authRoutes);
 await app.register(propertyRoutes);
+await app.register(plotRoutes);
 
 const port = Number(process.env.PORT ?? 3333);
 
