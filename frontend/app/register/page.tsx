@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { login, saveSession } from "../../lib/api";
+import { register, saveSession } from "../../lib/api";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -18,11 +19,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { accessToken, refreshToken } = await login(email, password);
+      const { accessToken, refreshToken } = await register(name, email, password);
       saveSession({ accessToken, refreshToken });
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao entrar");
+      setError(err instanceof Error ? err.message : "Erro ao criar conta");
     } finally {
       setLoading(false);
     }
@@ -31,7 +32,16 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-lg bg-white p-8 shadow">
-        <h1 className="mb-6 text-2xl font-semibold text-green-700">AgroField</h1>
+        <h1 className="mb-6 text-2xl font-semibold text-green-700">Criar conta</h1>
+
+        <label className="mb-1 block text-sm font-medium text-gray-700">Nome</label>
+        <input
+          type="text"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mb-4 w-full rounded border border-gray-300 px-3 py-2 focus:border-green-600 focus:outline-none"
+        />
 
         <label className="mb-1 block text-sm font-medium text-gray-700">E-mail</label>
         <input
@@ -46,6 +56,7 @@ export default function LoginPage() {
         <input
           type="password"
           required
+          minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="mb-4 w-full rounded border border-gray-300 px-3 py-2 focus:border-green-600 focus:outline-none"
@@ -58,13 +69,13 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full rounded bg-green-700 py-2 font-medium text-white hover:bg-green-800 disabled:opacity-50"
         >
-          {loading ? "Entrando..." : "Entrar"}
+          {loading ? "Criando..." : "Criar conta"}
         </button>
 
         <p className="mt-4 text-center text-sm text-gray-600">
-          Ainda não tem conta?{" "}
-          <Link href="/register" className="font-medium text-green-700 hover:underline">
-            Criar conta
+          Já tem conta?{" "}
+          <Link href="/login" className="font-medium text-green-700 hover:underline">
+            Entrar
           </Link>
         </p>
       </form>
