@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getAccessToken,
-  getProperties,
-  createProperty,
-  clearSession,
-  type Property,
-} from "../../lib/api";
+import Link from "next/link";
+import { getProperties, createProperty, clearSession, type Property } from "../../lib/api";
+import { useRequireAuth } from "../../lib/useRequireAuth";
+import { InfoTooltip } from "../../components/InfoTooltip";
 
 export default function DashboardPage() {
   const router = useRouter();
+  useRequireAuth();
+
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,11 +23,6 @@ export default function DashboardPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!getAccessToken()) {
-      router.push("/login");
-      return;
-    }
-
     loadProperties();
   }, []);
 
@@ -72,7 +66,10 @@ export default function DashboardPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-green-700">Minhas propriedades</h1>
+        <h1 className="flex items-center text-2xl font-semibold text-green-700">
+          Minhas fazendas
+          <InfoTooltip text="Uma fazenda é o terreno completo que você administra. Dentro dela, você vai cadastrar as áreas onde planta." />
+        </h1>
         <button onClick={handleLogout} className="text-sm text-gray-600 hover:underline">
           Sair
         </button>
@@ -83,15 +80,20 @@ export default function DashboardPage() {
       {loading ? (
         <p className="text-gray-600">Carregando...</p>
       ) : properties.length === 0 ? (
-        <p className="mb-6 text-gray-600">Você ainda não cadastrou nenhuma propriedade.</p>
+        <p className="mb-6 text-gray-600">Você ainda não cadastrou nenhuma fazenda.</p>
       ) : (
         <ul className="mb-6 space-y-3">
           {properties.map((property) => (
-            <li key={property.id} className="rounded-lg bg-white p-4 shadow">
-              <p className="font-medium">{property.name}</p>
-              <p className="text-sm text-gray-600">
-                {property.city}/{property.state} — {property.areaHa} ha
-              </p>
+            <li key={property.id}>
+              <Link
+                href={`/properties/${property.id}`}
+                className="block rounded-lg bg-white p-4 shadow hover:bg-gray-50"
+              >
+                <p className="font-medium">{property.name}</p>
+                <p className="text-sm text-gray-600">
+                  {property.city}/{property.state} — {property.areaHa} ha
+                </p>
+              </Link>
             </li>
           ))}
         </ul>

@@ -84,6 +84,95 @@ export function getProperties(): Promise<Property[]> {
   return authFetch("/properties");
 }
 
+export function getProperty(id: string): Promise<Property> {
+  return authFetch(`/properties/${id}`);
+}
+
 export function createProperty(data: { name: string; city: string; state: string; areaHa: number }): Promise<Property> {
   return authFetch("/properties", { method: "POST", body: JSON.stringify(data) });
+}
+
+export interface Plot {
+  id: string;
+  name: string;
+  areaHa: number;
+  soilType: string;
+  propertyId: string;
+}
+
+export function getPlots(propertyId: string): Promise<Plot[]> {
+  return authFetch(`/properties/${propertyId}/plots`);
+}
+
+export function getPlot(id: string): Promise<Plot> {
+  return authFetch(`/plots/${id}`);
+}
+
+export function createPlot(
+  propertyId: string,
+  data: { name: string; areaHa: number; soilType: string },
+): Promise<Plot> {
+  return authFetch(`/properties/${propertyId}/plots`, { method: "POST", body: JSON.stringify(data) });
+}
+
+export interface Crop {
+  id: string;
+  name: string;
+  variety: string | null;
+  plantedAt: string;
+  expectedHarvestAt: string | null;
+  plotId: string;
+}
+
+export function getCrops(plotId: string): Promise<Crop[]> {
+  return authFetch(`/plots/${plotId}/crops`);
+}
+
+export function getCrop(id: string): Promise<Crop> {
+  return authFetch(`/crops/${id}`);
+}
+
+export function createCrop(
+  plotId: string,
+  data: { name: string; variety?: string; plantedAt: string; expectedHarvestAt?: string },
+): Promise<Crop> {
+  return authFetch(`/plots/${plotId}/crops`, { method: "POST", body: JSON.stringify(data) });
+}
+
+export interface InputApplication {
+  id: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  appliedAt: string;
+  cropId: string;
+}
+
+export function getInputApplications(cropId: string): Promise<InputApplication[]> {
+  return authFetch(`/crops/${cropId}/input-applications`);
+}
+
+export function createInputApplication(
+  cropId: string,
+  data: { productName: string; quantity: number; unit: string; appliedAt: string },
+): Promise<InputApplication> {
+  return authFetch(`/crops/${cropId}/input-applications`, { method: "POST", body: JSON.stringify(data) });
+}
+
+export interface Harvest {
+  id: string;
+  quantityKg: number;
+  harvestedAt: string;
+  cropId: string;
+}
+
+export function getHarvests(cropId: string): Promise<Harvest[]> {
+  return authFetch(`/crops/${cropId}/harvests`);
+}
+
+export function createHarvest(
+  cropId: string,
+  data: { quantityKg: number; harvestedAt: string },
+): Promise<Harvest> {
+  return authFetch(`/crops/${cropId}/harvests`, { method: "POST", body: JSON.stringify(data) });
 }
